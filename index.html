@@ -413,7 +413,6 @@ body[data-parte="1"] .p2,body[data-parte="2"] .p1{display:none}
       <header class="ev-head">
         <h2 id="ev-h">Próximos eventos</h2>
         <div class="ev-right">
-          <span class="ev-mes" id="ev-mes"></span>
           <div class="ev-ui" id="ev-ui" hidden>
             <div class="prog" aria-hidden="true"><i id="ev-bar"></i></div>
             <button class="cb" id="ev-prev" type="button" aria-label="Eventos anteriores"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
@@ -425,8 +424,8 @@ body[data-parte="1"] .p2,body[data-parte="2"] .p1{display:none}
       <div class="ev-empty" id="ev-empty" hidden>
         <svg viewBox="0 0 64 64" fill="none" stroke="#93c0e3" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="12" width="48" height="44" rx="8"/><path d="M8 26h48M20 6v12M44 6v12"/><path d="M32 33v10M32 48v.5"/></svg>
         <div>
-          <h3>Próximamente anunciaremos nuevas actividades</h3>
-          <p>Cuando haya eventos programados para este mes, aparecerán aquí.</p>
+         <h3>No hay eventos programados</h3>
+          <p>Cuando se anuncien nuevas actividades, aparecerán aquí.</p>
         </div>
       </div>
     </section>
@@ -660,16 +659,15 @@ body[data-parte="1"] .p2,body[data-parte="2"] .p1{display:none}
   }
   function fit() { ui.hidden = track.hidden || !over(); if (!ui.hidden) sync(); }
 
-  /* Muestra solo los eventos del mes y año actuales del dispositivo */
+    /* Muestra los próximos eventos desde hoy. Cambia el número para mostrar más o menos */
+  var MAX_EVENTOS = 5;
   function render() {
     var now = new Date(), y = now.getFullYear(), m = now.getMonth(), d = now.getDate();
     var key = y + '-' + m + '-' + d;
     if (key === lastKey) return;
     lastKey = key;
     var today = new Date(y, m, d);
-    var list = load().filter(function (e) { return e.a.getFullYear() === y && e.a.getMonth() === m; });
-
-    mesTxt.textContent = MES[m].charAt(0).toUpperCase() + MES[m].slice(1) + ' de ' + y;
+       var list = load().filter(function (e) { return (e.b || e.a) >= today; }).slice(0, MAX_EVENTOS);
     track.textContent = '';
     track.hidden = !list.length;
     empty.hidden = !!list.length;
